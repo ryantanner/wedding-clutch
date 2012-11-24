@@ -1,0 +1,73 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET     /                               controllers.Application.index
+
+GET     /login                          controllers.Application.login
+POST    /login                          controllers.Application.authenticate
+
+GET     /weddings                       controllers.Weddings.index(id: Long = 0)
+GET     /weddings/:id                   controllers.Weddings.index(id: Long)
+
+# REST API
+
+# Users
+GET     /api/users                      controllers.Users.listAll
+GET     /api/users/:id                  controllers.Users.byId(id: Long)
+
+POST    /api/users                      controllers.Users.create
+
+PUT     /api/users                      controllers.Users.updateAll
+PUT     /api/users/:id                  controllers.Users.update(id: Long)
+
+DELETE  /api/users                      controllers.Users.deleteAll
+DELETE  /api/users/:id                  controllers.Users.delete(id: Long)
+
+# Events
+GET     /api/weddings/:weddingId/events         controllers.Events.listAll(weddingId: Long) 
+GET     /api/weddings/:weddingId/events/:id     controllers.Events.byId(weddingId: Long, id: Long)  
+
+POST    /api/weddings/:weddingId/events         controllers.Events.create(weddingId: Long)
+
+PUT     /api/weddings/:weddingId/events         controllers.Events.updateAll(weddingId: Long)
+PUT     /api/weddings/:weddingId/events/:id     controllers.Events.update(weddingId: Long, id: Long)
+
+DELETE  /api/weddings/:weddingId/events         controllers.Events.deleteAll(weddingId: Long)
+DELETE  /api/weddings/:weddingId/events/:id     controllers.Events.delete(weddingId: Long, id: Long)
+
+# Weddings
+GET     /api/weddings                   controllers.Weddings.listAll
+GET     /api/weddings/:id               controllers.Weddings.byId(id: Long)
+
+POST    /api/weddings                   controllers.Weddings.create
+
+PUT     /api/weddings                   controllers.Weddings.updateAll
+PUT     /api/weddings/:id               controllers.Weddings.update(id: Long)
+
+DELETE  /api/weddings                   controllers.Weddings.deleteAll
+DELETE  /api/weddings/:id               controllers.Weddings.delete(id: Long)
+
+# Vendors
+GET     /api/vendors            controllers.Vendors.listAll
+GET     /api/vendors/:vendorId  controllers.Vendors.byId(vendorId: Long)
+
+POST    /api/vendors            controllers.Vendors.create
+
+PUT     /api/vendors            controllers.Vendors.updateAll
+PUT     /api/vendors/:vendorId  controllers.Vendors.update(vendorId: Long)
+
+DELETE  /api/vendors            controllers.Vendors.deleteAll
+DELETE  /api/vendors/:vendorId  controllers.Vendors.delete(vendorId: Long)
+
+# Trigger
+
+POST    /api/trigger                          controllers.Events.trigger(eventId: Long)
+
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file                   controllers.Assets.at(path="/public", file)
+
+GET     /webjars/*file                  controllers.WebJarAssets.at(file)
+
