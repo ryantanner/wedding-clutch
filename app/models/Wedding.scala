@@ -10,8 +10,9 @@ import anorm._
 import anorm.SqlParser._
 
 import java.util.Date
+import java.text.SimpleDateFormat
 
-case class Wedding(id: Pk[Long], name: String, date: Date, venue: String, owner: String)
+case class Wedding(id: Pk[Long], name: String, date: Date, venue: String, coordinatorId: Long)
 
 object Wedding {
 
@@ -20,33 +21,43 @@ object Wedding {
     get[String]("wedding.name") ~
     get[Date]("wedding.date") ~
     get[String]("wedding.venue") ~
-    get[String]("wedding.owner") map {
-      case id~name~date~venue~owner => Wedding(
-        id, name, date, venue, owner
+    get[Long]("wedding.coordinator_id") map {
+      case id~name~date~venue~coordinatorId => Wedding(
+        id, name, date, venue, coordinatorId
       )
     }
   }
 
-  def findById(id: Long): Option[Wedding] = {
+  def findAll: Seq[Wedding] = {
     DB.withConnection { implicit connection =>
-      SQL("select * from wedding where id = {id}").on(
-        'id -> id
+      SQL("select * from wedding").as(Wedding.simple *)
+    }
+  }
+
+  def findById(id: Long, coordinatorId: Long): Option[Wedding] = {
+    DB.withConnection { implicit connection =>
+      SQL("select * from wedding where id = {id} and coordinator_id = {coordinator_id}").on(
+        'id -> id,
+        'coordinator_id -> coordinatorId
       ).as(Wedding.simple.singleOpt)
     }
   }
 
+  def findById(id: Long, coordinator: User): Option[Wedding] =
+    findById(id, coordinator.id.get)
+
   // def findWeddingInvolving
   // allow searching by vendor
 
-  def findByOwner(owner: String): Seq[Wedding] = {
+  def findByCoordinatorId(coordinatorId: Long): Seq[Wedding] = {
     DB.withConnection { implicit connection =>
       SQL(
         """
           select * from wedding
-          where wedding.owner = {owner}
+          where wedding.coordinator_id = {coordinator_id}
         """
       ).on(
-        'owner -> owner 
+        'coordinator_id -> coordinatorId 
       ).as(Wedding.simple *)
     }
   }
@@ -73,56 +84,58 @@ object Wedding {
     }
   }
 
-  def create(wedding: Wedding): Wedding = {
+  def create(wedding: Wedding): Option[Long] = {
     DB.withConnection { implicit connection =>
-
-      // Get the wedding id
-      val id: Long = wedding.id.getOrElse {
-        SQL("select next value for wedding_seq").as(scalar[Long].single)
-      }
 
       SQL(
         """
-          insert into wedding values (
-            {id}, {name}, {date}, {venue}
+          insert into wedding (name, date, venue, coordinator_id) values (
+            {name}, {date}, {venue}, {coordinator_id}
           )
         """
       ).on(
-        'id -> wedding.id,
         'name -> wedding.name,
         'date -> wedding.date,
-        'venue -> wedding.venue
-      ).executeUpdate()
-
-      wedding.copy(id = Id(id))
-
+        'venue -> wedding.venue,
+        'coordinator_id -> wedding.coordinatorId
+      ).executeInsert()
     }
   }
 
-  def isOwner(wedding: Long, owner: String): Boolean = {
+  def isCoordinator(wedding: Wedding, coordinator: User): Boolean = {
     DB.withConnection { implicit connection =>
       SQL(
         """
           select count(wedding.id) = 1 from wedding
-          where wedding.id = {id} and wedding.owner = {owner}
+          where wedding.id = {id} and wedding.coordinator_id = {coordinator_id}
         """
       ).on(
-        'id -> wedding,
-        'owner -> owner
+        'id -> wedding.id.get,
+        'coordinator_id -> coordinator.id.get
       ).as(scalar[Boolean].single)
     }
   }
 
-  def toJson(wedding: Wedding): JsValue = {
-    Json.toJson(
-      Map(
-        "id" -> Json.toJson(wedding.id.get),
-        "name" -> Json.toJson(wedding.name),
-        "owner" -> Json.toJson(wedding.owner),
-        "date" -> Json.toJson(wedding.date.toString),
-        "venue" -> Json.toJson(wedding.venue)
-      )
+  implicit object WeddingFormat extends Format[Wedding] {
+
+    def writes(w: Wedding): JsValue = JsObject(Seq(
+      "id" -> JsNumber(w.id.get),
+      "name" -> JsString(w.name),
+      "date" -> JsString(w.date.toString),
+      "venue" -> JsString(w.venue),
+      "coordinator_id" -> JsNumber(w.coordinatorId)
+    ))
+
+    def reads(json: JsValue): Wedding = Wedding(
+      (json \ "id").asOpt[Long].map(id =>
+        Id(id)
+      ).getOrElse(NotAssigned),
+      (json \ "name").as[String],
+      (new SimpleDateFormat("dd-MM-yyyy")).parse((json \ "date").as[String]),
+      (json \ "venue").as[String],
+      (json \ "coordinator_id").as[Long]
     )
+
   }
 
 

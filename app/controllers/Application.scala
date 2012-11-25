@@ -66,8 +66,23 @@ trait Secured {
   /**
    * Check if the connected user is a owner of this task.
    */
-  def IsOwnerOf(wedding: Long)(f: => String => Request[AnyContent] => Result) = IsAuthenticated { user => request =>
-    if(Wedding.isOwner(wedding, user)) {
+  def IsCoordinatorOf(weddingId: Long)(f: => String => Request[AnyContent] => Result) = IsAuthenticated { userEmail => request =>
+    User.findByEmail(userEmail).map { user =>
+      Wedding.findById(weddingId, user).map { wedding =>
+        if(Wedding.isCoordinator(wedding, user)) {
+          f(userEmail)(request)
+        } else {
+          Results.Forbidden
+        }
+      }.getOrElse(Results.Forbidden)
+    }.getOrElse(Results.Forbidden)
+  }
+
+  /**
+   * Check if user is an admin
+   */
+  def IsAdmin(id: Long)(f: => String => Request[AnyContent] => Result) = IsAuthenticated { user => request =>
+    if(User.isAdmin(id)) {
       f(user)(request)
     } else {
       Results.Forbidden
