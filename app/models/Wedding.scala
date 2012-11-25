@@ -62,6 +62,10 @@ object Wedding {
     }
   }
 
+  def findByCoordinator(coordinator: User): Seq[Wedding] =
+    coordinator.id.map { id =>
+      findByCoordinatorId(id)
+    }.getOrElse(Nil)
 
   def findByVenue(venue: String): Seq[Wedding] = {
     DB.withConnection { implicit connection =>

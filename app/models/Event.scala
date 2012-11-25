@@ -33,7 +33,17 @@ object Event   {
     }
   }
 
-  def findVendors(id: Long): Seq[Vendor] = Nil
+  def findVendors(eventId: Long): Seq[Vendor] = {
+    DB.withConnection { implicit connection =>
+      SQL("select * from events_vendors where event_id = {eventId}").on(
+        'eventId -> eventId
+      ).apply().map(row =>
+        row[Long]("event_id") -> row[Long]("vendor_id")
+      ).toList.map(_._2).map(vendorId =>
+        Vendor.findById(vendorId).get
+      )
+    }
+  }
 
 }
 

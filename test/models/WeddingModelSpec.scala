@@ -149,6 +149,18 @@ class WeddingModelSpec extends Specification {
       }
     }
 
+    "verify coordinator of wedding" in {  
+      running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
+
+        val testUser = User.findAll.head
+
+        val weddings = Wedding.findByCoordinator(testUser)
+
+        weddings.map(Wedding.isCoordinator(_, testUser) must beTrue)
+
+      }
+    }
+
 
   }
 

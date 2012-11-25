@@ -36,8 +36,42 @@ insert into wedding (name, date, venue, coordinator_id) values ('Test Wedding 19
 insert into wedding (name, date, venue, coordinator_id) values ('Test Wedding 20', '2012-04-25', 'Country Club', 3);
 insert into wedding (name, date, venue, coordinator_id) values ('Test Wedding 21', '2012-04-27', 'Country Club', 3);
 
+insert into vendor (name, role, phone, coordinator_id) values
+  ('Betty the Florist', 'Florist', '5555555555', 1);
+insert into vendor (name, role, phone, coordinator_id) values
+  ('Sally the Florist', 'Florist', '5555555555', 1);
+insert into vendor (name, role, phone, coordinator_id) values
+  ('Jenny the Florist', 'Florist', '5555555555', 2);
+insert into vendor (name, role, phone, coordinator_id) values
+  ('Cindy the Florist', 'Florist', '5555555555', 3);
+insert into vendor (name, role, phone, coordinator_id) values
+  ('Sara the Florist', 'Florist', '5555555555', 3);
+insert into vendor (name, role, phone, coordinator_id) values
+  ('Linda the Florist', 'Florist', '5555555555', 2);
+insert into vendor (name, role, phone, coordinator_id) values
+  ('Maggie the Florist', 'Florist', '5555555555', 2);
+
+insert into event (name, timeline_order, coordinator_id, wedding_id) values
+  ('Start the Music', 1, 1, 1);
+insert into event (name, timeline_order, coordinator_id, wedding_id) values
+  ('Plate the Food', 2, 1, 1);
+insert into event (name, timeline_order, coordinator_id, wedding_id) values
+  ('Do something else', 3, 1, 1);
+insert into event (name, timeline_order, coordinator_id, wedding_id) values
+  ('Do another thing', 4, 1, 1);
+
+insert into events_vendors (event_id, vendor_id) values (1, 1);
+insert into events_vendors (event_id, vendor_id) values (1, 2);
+insert into events_vendors (event_id, vendor_id) values (2, 1);
+insert into events_vendors (event_id, vendor_id) values (2, 2);
+insert into events_vendors (event_id, vendor_id) values (3, 1);
+insert into events_vendors (event_id, vendor_id) values (4, 2);
+
 # --- !Downs
 
+delete from events_vendors;
+delete from event;
+delete from vendor;
 delete from wedding;
 delete from user_admins;
 delete from user;

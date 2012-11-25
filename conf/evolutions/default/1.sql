@@ -26,13 +26,14 @@ create table event (
   timeline_order    int not null,
   coordinator_id    bigint not null,
   wedding_id        bigint not null,
-  foreign key(coordinator_id) references user(id),
-  foreign key(wedding_id) references wedding(id))
+  foreign key(coordinator_id) references user(id) on delete cascade,
+  foreign key(wedding_id) references wedding(id) on delete cascade)
 ;
 
 create table vendor (
   id                bigint identity not null,
   name              varchar(255) not null,
+  role              varchar(255) not null,
   phone             varchar(12) not null,
   coordinator_id    bigint not null,
   foreign key(coordinator_id) references user(id))
@@ -41,8 +42,8 @@ create table vendor (
 create table events_vendors (
   event_id          bigint not null,
   vendor_id         bigint not null,
-  foreign key(event_id) references event(id),
-  foreign key(vendor_id) references vendor(id))
+  foreign key(event_id) references event(id) on delete cascade,
+  foreign key(vendor_id) references vendor(id) on delete cascade)
 ;
 
 create table user_admins (
