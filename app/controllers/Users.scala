@@ -8,7 +8,7 @@ import models._
 
 object Users extends Controller with Secured  {
 
-  def listAll = Action {
+  def listAll = IsAdmin { username => _ =>
     val users = User.findAll
 
     Ok(Json.toJson(users))
@@ -29,12 +29,12 @@ object Users extends Controller with Secured  {
     val userJson = request.body
     val user = userJson.as[User]
 
-    User.create(user)
-
-    Ok(Json.toJson(Map(
-      "status" -> "200",
-      "message" -> "User successfully created"
-    )))
+    User.create(user).map { newUser =>
+      Ok(Json.toJson(Map(
+        "status" -> "200",
+        "message" -> "User successfully created"
+      )))
+    }.getOrElse(InternalServerError)
   }
 
   def updateAll = TODO

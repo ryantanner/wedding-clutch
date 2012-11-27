@@ -59,30 +59,30 @@ trait Secured {
   /** 
    * Action for authenticated users.
    */
-  def IsAuthenticated(f: => String => Request[AnyContent] => Result) = Security.Authenticated(username, onUnauthorized) { user =>
-    Action(request => f(user)(request))
+  def IsAuthenticated(f: => User => Request[AnyContent] => Result) = Security.Authenticated(username, onUnauthorized) { userEmail =>
+    User.findByEmail(userEmail).map { user =>
+      Action(request => f(user)(request))
+    }.getOrElse(Action(Results.Forbidden))
   }
 
   /**
    * Check if the connected user is a owner of this task.
    */
-  def IsCoordinatorOf(weddingId: Long)(f: => String => Request[AnyContent] => Result) = IsAuthenticated { userEmail => request =>
-    User.findByEmail(userEmail).map { user =>
-      Wedding.findById(weddingId, user).map { wedding =>
-        if(Wedding.isCoordinator(wedding, user)) {
-          f(userEmail)(request)
-        } else {
-          Results.Forbidden
-        }
-      }.getOrElse(Results.Forbidden)
+  def IsCoordinatorOf(weddingId: Long)(f: => User => Request[AnyContent] => Result) = IsAuthenticated { user => request =>
+    Wedding.findById(weddingId, user).map { wedding =>
+      if(Wedding.isCoordinator(wedding, user)) {
+        f(user)(request)
+      } else {
+        Results.Forbidden
+      }
     }.getOrElse(Results.Forbidden)
   }
 
   /**
    * Check if user is an admin
    */
-  def IsAdmin(id: Long)(f: => String => Request[AnyContent] => Result) = IsAuthenticated { user => request =>
-    if(User.isAdmin(id)) {
+  def IsAdmin(f: => User => Request[AnyContent] => Result) = IsAuthenticated { user => request =>
+    if(User.isAdmin(user)) {
       f(user)(request)
     } else {
       Results.Forbidden

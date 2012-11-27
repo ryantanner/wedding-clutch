@@ -42,9 +42,12 @@ create table vendor (
 create table events_vendors (
   event_id          bigint not null,
   vendor_id         bigint not null,
+  coordinator_id    bigint not null,
   foreign key(event_id) references event(id) on delete cascade,
-  foreign key(vendor_id) references vendor(id) on delete cascade)
+  foreign key(vendor_id) references vendor(id) on delete cascade,
+  foreign key(coordinator_id) references user(id) on delete cascade)
 ;
+
 
 create table user_admins (
   user_id           bigint not null,

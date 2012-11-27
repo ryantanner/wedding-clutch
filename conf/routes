@@ -27,7 +27,7 @@ DELETE  /api/users/:id                  controllers.Users.delete(id: Long)
 
 # Events
 GET     /api/weddings/:weddingId/events         controllers.Events.listAll(weddingId: Long) 
-GET     /api/weddings/:weddingId/events/:id     controllers.Events.byId(weddingId: Long, id: Long)  
+GET     /api/weddings/:weddingId/events/:eventId     controllers.Events.byId(weddingId: Long, eventId: Long)  
 
 POST    /api/weddings/:weddingId/events         controllers.Events.create(weddingId: Long)
 

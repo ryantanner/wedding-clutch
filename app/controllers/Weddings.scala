@@ -15,36 +15,41 @@ import views._
 
 object Weddings extends Controller with Secured {
 
-  def index(id: Long = 0) = IsAuthenticated { username => _ =>
-    User.findByEmail(username).map { user =>
-      val weddings = Wedding.findByCoordinatorId(user.id.get)
-      Ok(html.weddings.weddings(
-        user,
-        weddings,
-        Wedding.findById(id,user.id.get)))
-    }.getOrElse(Forbidden)
+  def index(id: Long = 0) = IsAuthenticated { user => _ =>
+    val weddings = Wedding.findByCoordinator(user)
+    Ok(html.weddings.weddings(
+      user,
+      weddings,
+      Wedding.findById(id,user)))
   }
 
 
   // REST API
 
-  def listAll = IsAuthenticated { username => _ =>
-    User.findByEmail(username).map { user =>
-      val weddings = Wedding.findByCoordinatorId(user.id.get)
-      Ok(Json.toJson(weddings))
-    }.getOrElse(Forbidden)
+  def listAll = IsAuthenticated { user => _ =>
+    val weddings = Wedding.findByCoordinator(user)
+    Ok(Json.toJson(weddings))
   }
 
-  def byId(id: Long) = IsCoordinatorOf(id) { username => _ =>
-    User.findByEmail(username).map { user =>
-      Wedding.findById(id, user.id.get).map { wedding =>
-        Ok(Json.toJson(wedding))
-      }.getOrElse(NotFound)
-    }.getOrElse(Forbidden)
+  def byId(id: Long) = IsCoordinatorOf(id) { user => _ =>
+    Wedding.findById(id, user).map { wedding =>
+      Ok(Json.toJson(wedding))
+    }.getOrElse(NotFound)
   }
 
 
-  def create = TODO
+  def create = IsAuthenticated { user => implicit request => 
+    request.body.asJson.map { weddingJson =>
+      val wedding = weddingJson.as[Wedding]
+
+      Wedding.create(wedding).map(newWedding =>
+        Ok(Json.toJson(Map(
+          "status" -> "200",
+          "message" -> "Wedding successfully created"
+        )))
+      ).getOrElse(InternalServerError)
+    }.getOrElse(BadRequest)
+  }
 
   def updateAll = TODO
 

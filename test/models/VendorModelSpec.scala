@@ -16,13 +16,13 @@ class VendorModelSpec extends Specification {
     "be retrieved by id" in {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
 
-        val Some(betty) = Vendor.findById(1)
+        val Some(betty) = Vendor.findById(1, 1)
         betty.name must equalTo("Betty the Florist")
 
-        val Some(sally) = Vendor.findById(2)
+        val Some(sally) = Vendor.findById(2, 1)
         sally.name must equalTo("Sally the Florist")
 
-        val Some(jenny) = Vendor.findById(3)
+        val Some(jenny) = Vendor.findById(3, 2)
         jenny.name must equalTo("Jenny the Florist")
 
 
@@ -32,7 +32,7 @@ class VendorModelSpec extends Specification {
     "not be retrieved by invalid id" in {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
 
-        Vendor.findById(10000) must beNone
+        Vendor.findById(10000, 1000) must beNone
 
       }
     }

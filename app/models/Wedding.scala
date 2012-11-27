@@ -2,6 +2,7 @@ package models
 
 import play.api.db._
 import play.api.Play.current
+import play.api.Logger
 
 import play.api.libs.json.Json
 import play.api.libs.json._
@@ -91,7 +92,7 @@ object Wedding {
   def create(wedding: Wedding): Option[Long] = {
     DB.withConnection { implicit connection =>
 
-      SQL(
+      val newWeddingId = SQL(
         """
           insert into wedding (name, date, venue, coordinator_id) values (
             {name}, {date}, {venue}, {coordinator_id}
@@ -103,6 +104,10 @@ object Wedding {
         'venue -> wedding.venue,
         'coordinator_id -> wedding.coordinatorId
       ).executeInsert()
+      
+      Logger.info("[Wedding] new wedding created " + newWeddingId)
+      newWeddingId
+
     }
   }
 

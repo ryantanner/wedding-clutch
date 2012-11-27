@@ -60,12 +60,12 @@ insert into event (name, timeline_order, coordinator_id, wedding_id) values
 insert into event (name, timeline_order, coordinator_id, wedding_id) values
   ('Do another thing', 4, 1, 1);
 
-insert into events_vendors (event_id, vendor_id) values (1, 1);
-insert into events_vendors (event_id, vendor_id) values (1, 2);
-insert into events_vendors (event_id, vendor_id) values (2, 1);
-insert into events_vendors (event_id, vendor_id) values (2, 2);
-insert into events_vendors (event_id, vendor_id) values (3, 1);
-insert into events_vendors (event_id, vendor_id) values (4, 2);
+insert into events_vendors (event_id, vendor_id, coordinator_id) values (1, 1, 1);
+insert into events_vendors (event_id, vendor_id, coordinator_id) values (1, 2, 1);
+insert into events_vendors (event_id, vendor_id, coordinator_id) values (2, 1, 1);
+insert into events_vendors (event_id, vendor_id, coordinator_id) values (2, 2, 1);
+insert into events_vendors (event_id, vendor_id, coordinator_id) values (3, 1, 1);
+insert into events_vendors (event_id, vendor_id, coordinator_id) values (4, 2, 1);
 
 # --- !Downs
 

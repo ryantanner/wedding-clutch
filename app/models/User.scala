@@ -74,6 +74,10 @@ object User {
     }
   }
 
+  def isAdmin(user: User): Boolean = {
+    isAdmin(user.id.get)
+  }
+
   def isAdmin(id: Long): Boolean = {
     DB.withConnection { implicit connection =>
       SQL(
@@ -86,6 +90,9 @@ object User {
       ).as(scalar[Boolean].single)
     }
   }
+
+  def isAdminByEmail(userEmail: String): Boolean = 
+    isAdmin(findByEmail(userEmail).get.id.get)
 
   implicit object UserFormat extends Format[User] {
 
