@@ -8,22 +8,22 @@ GET     /                               controllers.Application.index
 GET     /login                          controllers.Application.login
 POST    /login                          controllers.Application.authenticate
 
-GET     /weddings                       controllers.Weddings.index(id: Long = 0)
+GET     /weddings                       controllers.Weddings.main
 GET     /weddings/:id                   controllers.Weddings.index(id: Long)
 
 # REST API
 
-# Users
-GET     /api/users                      controllers.Users.listAll
-GET     /api/users/:id                  controllers.Users.byId(id: Long)
+# Accounts
+GET     /api/users                      controllers.Accounts.listAll
+GET     /api/users/:id                  controllers.Accounts.byId(id: Long)
 
-POST    /api/users                      controllers.Users.create
+POST    /api/users                      controllers.Accounts.create
 
-PUT     /api/users                      controllers.Users.updateAll
-PUT     /api/users/:id                  controllers.Users.update(id: Long)
+PUT     /api/users                      controllers.Accounts.updateAll
+PUT     /api/users/:id                  controllers.Accounts.update(id: Long)
 
-DELETE  /api/users                      controllers.Users.deleteAll
-DELETE  /api/users/:id                  controllers.Users.delete(id: Long)
+DELETE  /api/users                      controllers.Accounts.deleteAll
+DELETE  /api/users/:id                  controllers.Accounts.delete(id: Long)
 
 # Events
 GET     /api/weddings/:weddingId/events         controllers.Events.listAll(weddingId: Long) 

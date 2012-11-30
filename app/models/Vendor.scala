@@ -9,6 +9,8 @@ import play.api.libs.json.Json
 import anorm._
 import anorm.SqlParser._
 
+import auth._
+
 case class Vendor(id: Pk[Long], name: String, role: String, phone: String, coordinatorId: Long)
 
 object Vendor   {
@@ -37,7 +39,7 @@ object Vendor   {
     }
   }
 
-  def findById(id: Long, coordinator: User): Option[Vendor] = {
+  def findById(id: Long, coordinator: Account): Option[Vendor] = {
     findById(id, coordinator.id.get)
   }
 
@@ -54,13 +56,13 @@ object Vendor   {
     }
   }
 
-  def findByCoordinator(coordinator: User): Seq[Vendor] = {
+  def findByCoordinator(coordinator: Account): Seq[Vendor] = {
     coordinator.id.map { id =>
       findByCoordinatorId(id)
     }.getOrElse(Nil)
   }
 
-  def findByRole(role: String, coordinator: User): Seq[Vendor] = {
+  def findByRole(role: String, coordinator: Account): Seq[Vendor] = {
     coordinator.id.map { coordinatorId =>
       DB.withConnection { implicit connection =>
         SQL("""

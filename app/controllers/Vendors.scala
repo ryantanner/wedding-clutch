@@ -8,9 +8,9 @@ import play.api.libs.json.Json
 
 import models._
 
-object Vendors extends Controller with Secured  {
+object Vendors extends AuthController {
 
-  def listAll = IsAuthenticated { user => _ =>
+  def listAll = IsAuthenticated { user => implicit request =>
     val vendors = Vendor.findByCoordinator(user)
     Ok(Json.toJson(vendors))
   }

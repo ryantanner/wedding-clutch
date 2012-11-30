@@ -13,9 +13,9 @@ import anorm._
 import models._
 import views._
 
-object Weddings extends Controller with Secured {
+object Weddings extends AuthController {
 
-  def index(id: Long = 0) = IsAuthenticated { user => _ =>
+  def index(id: Long) = IsAuthenticated { user => _ =>
     val weddings = Wedding.findByCoordinator(user)
     Ok(html.weddings.weddings(
       user,
@@ -23,6 +23,7 @@ object Weddings extends Controller with Secured {
       Wedding.findById(id,user)))
   }
 
+  def main = index(0)
 
   // REST API
 

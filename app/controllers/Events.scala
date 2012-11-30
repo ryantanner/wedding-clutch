@@ -13,16 +13,16 @@ import anorm._
 
 import models._
 
-object Events extends Controller with Secured {
-
+object Events extends AuthController {
+ 
   // REST API
 
-  def listAll(weddingId: Long) = IsAuthenticated { user => _ =>
+  def listAll(weddingId: Long) = IsCoordinatorOf(weddingId) { user => implicit request =>
     val events = Event.findByWeddingId(weddingId, user.id.get)
     Ok(Json.toJson(events))
   }
 
-  def byId(weddingId: Long, eventId: Long) = IsCoordinatorOf(weddingId) { user => _ =>
+  def byId(weddingId: Long, eventId: Long) = IsCoordinatorOf(weddingId) { user => implicit request =>
     Event.findById(eventId, user.id.get).map { event =>
       Ok(Json.toJson(event))
     }.getOrElse(NotFound)

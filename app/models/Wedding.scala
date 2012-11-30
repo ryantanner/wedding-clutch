@@ -13,6 +13,8 @@ import anorm.SqlParser._
 import java.util.Date
 import java.text.SimpleDateFormat
 
+import auth._
+
 case class Wedding(id: Pk[Long], name: String, date: Date, venue: String, coordinatorId: Long)
 
 object Wedding {
@@ -44,7 +46,7 @@ object Wedding {
     }
   }
 
-  def findById(id: Long, coordinator: User): Option[Wedding] =
+  def findById(id: Long, coordinator: Account): Option[Wedding] =
     findById(id, coordinator.id.get)
 
   // def findWeddingInvolving
@@ -63,7 +65,7 @@ object Wedding {
     }
   }
 
-  def findByCoordinator(coordinator: User): Seq[Wedding] =
+  def findByCoordinator(coordinator: Account): Seq[Wedding] =
     coordinator.id.map { id =>
       findByCoordinatorId(id)
     }.getOrElse(Nil)
@@ -111,7 +113,7 @@ object Wedding {
     }
   }
 
-  def isCoordinator(wedding: Wedding, coordinator: User): Boolean = {
+  def isCoordinator(weddingId: Long, coordinator: Account): Boolean = {
     DB.withConnection { implicit connection =>
       SQL(
         """
@@ -119,11 +121,15 @@ object Wedding {
           where wedding.id = {id} and wedding.coordinator_id = {coordinator_id}
         """
       ).on(
-        'id -> wedding.id.get,
+        'id -> weddingId,
         'coordinator_id -> coordinator.id.get
       ).as(scalar[Boolean].single)
     }
   }
+
+  def isCoordinator(wedding: Wedding, coordinator: Account): Boolean = 
+    isCoordinator(wedding.id.get, coordinator)
+
 
   implicit object WeddingFormat extends Format[Wedding] {
 

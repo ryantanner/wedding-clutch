@@ -9,6 +9,8 @@ import play.api.libs.json.Json
 import anorm._
 import anorm.SqlParser._
 
+import auth._
+
 case class Event(id: Pk[Long], name: String, order: Int, coordinatorId: Long, weddingId: Long, vendorIds: Seq[Long])
 
 object Event   {
@@ -62,7 +64,7 @@ object Event   {
     }
   }
 
-  def findByCoordinator(coordinator: User): Seq[Event] =
+  def findByCoordinator(coordinator: Account): Seq[Event] =
     coordinator.id.map { id =>
       findByCoordinatorId(coordinator.id.get)
     }.getOrElse(Nil)
