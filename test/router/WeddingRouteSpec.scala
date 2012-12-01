@@ -12,21 +12,8 @@ import play.api.libs.json.Json.parse
 
 class WeddingRouteSpec extends Specification with SessionHelper {
 
-  /*
-  val adminEmail = ("email" -> "jane.smith@gmail.com")
-  val adminPass = ("password" -> "password")
-
-  val badEmail = ("email" -> "totallywrong@gmail.com")
-  val badPass = ("email" -> "totallywrong")
-
-  val normalEmail = ("email" -> "mary.kate@gmail.com")
-  val normalPass = ("password" -> "password")
-
-  def sessionToData(session: Session): List[(String,String)] = {
-    session.data.map { case (k,v) => (k,v) }(collection.breakOut)
-  }
-
-  "Router" should {
+/*
+  "Wedding Router" should {
 
     "get index" in {
       val Some(result) = routeAndCall(FakeRequest(GET, "/"))
@@ -96,28 +83,6 @@ class WeddingRouteSpec extends Specification with SessionHelper {
       }
     }
 
-  
-
-  "REST API as admin" should {
-
-    "login as admin" in {
-        val Some(result) = routeAndCall(FakeRequest(POST, "/login")
-                             .withFormUrlEncodedBody(adminEmail, adminPass)
-                           )
-
-        status(result) must equalTo(SEE_OTHER)
-      }
-    }
-
-    "respond to GET /users" in {
-      running(FakeApplication()) {
-        val Some(result) = routeAndCall(FakeRequest(GET, "/api/users").withHeaders(adminEmail))
-
-        status(result) must equalTo(OK)
-      }
-    }
-
   }
-    */
-
+*/
 }

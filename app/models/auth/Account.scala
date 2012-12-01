@@ -2,6 +2,7 @@ package models.auth
 
 import play.api.db._
 import play.api.libs.json._
+import play.api.Logger
 import anorm._
 import anorm.SqlParser._
 import play.api.Play.current
@@ -52,6 +53,14 @@ object Account {
   }
 
   def authenticate(email: String, password: String): Option[Account] = {
+    Logger.info("[Account] Authenticating %s/%s".format(email, password))
+    Logger.info("[Account] Salt should equal %s".format(BCrypt.hashpw(password, BCrypt.gensalt())))
+
+    DB.withConnection { implicit connection =>
+      val salt = SQL("SELECT password FROM account WHERE id = 1").as(scalar[String].single)
+      Logger.info("[Account] Salt in db equals %s".format(salt))
+    }
+
     findByEmail(email).filter { account => BCrypt.checkpw(password, account.password) }
   }
 
@@ -103,6 +112,7 @@ object Account {
   }
 
   def update(account: Account): Int = {
+    Logger.info("[Account] updating account id = %d".format(account.id.getOrElse(0)))
     DB.withConnection { implicit connection =>
       SQL("""
         update account

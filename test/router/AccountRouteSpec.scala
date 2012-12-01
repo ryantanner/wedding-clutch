@@ -12,15 +12,6 @@ import play.api.libs.json.Json.parse
 
 class AccountRouteSpec extends Specification with SessionHelper {
 
-  val adminEmail = ("email" -> "jane.smith@gmail.com")
-  val adminPass = ("password" -> "password")
-
-  val badEmail = ("email" -> "totallywrong@gmail.com")
-  val badPass = ("email" -> "totallywrong")
-
-  val normalEmail = ("email" -> "mary.kate@gmail.com")
-  val normalPass = ("password" -> "password")
-
   "Router" should {
 
     "get index" in {
@@ -97,6 +88,15 @@ class AccountRouteSpec extends Specification with SessionHelper {
 }
 
 trait SessionHelper {
+
+  val adminEmail = ("email" -> "jane.smith@gmail.com")
+  val adminPass = ("password" -> "password")
+
+  val badEmail = ("email" -> "totallywrong@gmail.com")
+  val badPass = ("email" -> "totallywrong")
+
+  val normalEmail = ("email" -> "mary.kate@gmail.com")
+  val normalPass = ("password" -> "password")
 
   implicit def sessionToData(session: Session): List[(String,String)] = {
     session.data.map { case (k,v) => (k,v) }(collection.breakOut)
