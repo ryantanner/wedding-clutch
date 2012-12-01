@@ -6,7 +6,7 @@ import anorm._
 import anorm.SqlParser._
 import play.api.Play.current
 import java.sql.Clob
-//import org.mindrot.jbcrypt.BCrypt
+import org.mindrot.jbcrypt.BCrypt
 
 case class Account(id: Pk[Long], email: String, password: String, name: String, permission: Permission)
 
@@ -52,8 +52,7 @@ object Account {
   }
 
   def authenticate(email: String, password: String): Option[Account] = {
-//    findByEmail(email).filter { account => BCrypt.checkpw(password, account.password) }
-    findByEmail(email).filter { account => password == account.password }
+    findByEmail(email).filter { account => BCrypt.checkpw(password, account.password) }
   }
 
   def findByEmail(email: String): Option[Account] = {
@@ -96,11 +95,28 @@ object Account {
       SQL("INSERT INTO account VALUES ({id}, {email}, {pass}, {name}, {permission})").on(
         'id -> account.id,
         'email -> account.email,
-//        'pass -> BCrypt.hashpw(account.password, BCrypt.gensalt()),
-        'pass -> account.password,
+        'pass -> BCrypt.hashpw(account.password, BCrypt.gensalt()),
         'name -> account.name,
         'permission -> account.permission.toString
       ).executeInsert()
+    }
+  }
+
+  def update(account: Account): Int = {
+    DB.withConnection { implicit connection =>
+      SQL("""
+        update account
+        set email = {email},
+        password = {password},
+        name = {name}
+        where id = {id}
+        """
+      ).on(
+        'email -> account.email,
+        'password -> BCrypt.hashpw(account.password, BCrypt.gensalt()),
+        'name -> account.name,
+        'id -> account.id
+      ).executeUpdate()
     }
   }
 

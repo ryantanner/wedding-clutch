@@ -6,6 +6,8 @@ import play.api.Play.current
 import play.api.libs.json._
 import play.api.libs.json.Json
 
+import play.api.Logger
+
 import anorm._
 import anorm.SqlParser._
 
@@ -83,6 +85,27 @@ object Event   {
       )
     }
   }
+
+  def create(event: Event): Option[Long] = {
+    DB.withConnection { implicit connection =>
+      val newEventId = SQL("""
+        insert into event (name, order, coordinator_id, wedding_id) values
+        (name = {name}, order = {order}, coordinator_id = {coordinator_id}, wedding_id = {wedding_id})"""
+      ).on(
+        'name -> event.name,
+        'order -> event.order,
+        'coordinator_id -> event.coordinatorId,
+        'wedding_id -> event.weddingId
+      ).executeInsert()
+
+      newEventId.map(id =>
+        Logger.info("[Event] new event created. id: " + id)
+      ).getOrElse(Logger.debug("[Event] event creation failed!"))
+
+      newEventId
+    }
+  }
+
 
   implicit object EventFormat extends Format[Event] {
 

@@ -20,25 +20,21 @@ class AccountModelSpec extends Specification {
       
         jane.name must equalTo("Jane Smith")
         jane.email must equalTo("jane.smith@gmail.com")
-        jane.password must equalTo("password")
         
         val Some(mary) = Account.findById(2)
       
         mary.name must equalTo("Mary Kate")
         mary.email must equalTo("mary.kate@gmail.com")
-        mary.password must equalTo("password")
         
         val Some(ellen) = Account.findById(3)
       
         ellen.name must equalTo("Ellen Joy")
         ellen.email must equalTo("ellen.joy@gmail.com")
-        ellen.password must equalTo("password")
         
         val Some(cassie) = Account.findById(4)
       
         cassie.name must equalTo("Cassie Costanzo")
         cassie.email must equalTo("cassie.constanzo@gmail.com")
-        cassie.password must equalTo("password")
         
       }
     }
@@ -59,25 +55,18 @@ class AccountModelSpec extends Specification {
       
         jane.name must equalTo("Jane Smith")
         jane.id.get must equalTo(1)
-        jane.password must equalTo("password")
-        
         val Some(mary) = Account.findByEmail("mary.kate@gmail.com")
       
         mary.name must equalTo("Mary Kate")
         mary.id.get must equalTo(2)
-        mary.password must equalTo("password")
-        
         val Some(ellen) = Account.findByEmail("ellen.joy@gmail.com")
       
         ellen.name must equalTo("Ellen Joy")
         ellen.id.get must equalTo(3)
-        ellen.password must equalTo("password")
-        
         val Some(cassie) = Account.findByEmail("cassie.constanzo@gmail.com")
       
         cassie.name must equalTo("Cassie Costanzo")
         cassie.id.get must equalTo(4)
-        cassie.password must equalTo("password")
         
       }    
     }
@@ -104,25 +93,21 @@ class AccountModelSpec extends Specification {
       
         jane.name must equalTo("Jane Smith")
         jane.id.get must equalTo(1)
-        jane.password must equalTo("password")
         
         val Some(mary) = Account.authenticate("mary.kate@gmail.com", "password")
       
         mary.name must equalTo("Mary Kate")
         mary.id.get must equalTo(2)
-        mary.password must equalTo("password")
         
         val Some(ellen) = Account.authenticate("ellen.joy@gmail.com", "password")
       
         ellen.name must equalTo("Ellen Joy")
         ellen.id.get must equalTo(3)
-        ellen.password must equalTo("password")
         
         val Some(cassie) = Account.authenticate("cassie.constanzo@gmail.com", "password")
       
         cassie.name must equalTo("Cassie Costanzo")
         cassie.id.get must equalTo(4)
-        cassie.password must equalTo("password")
 
       }
     }

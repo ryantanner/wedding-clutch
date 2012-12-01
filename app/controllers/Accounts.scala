@@ -29,6 +29,9 @@ object Accounts extends AuthController {
   def create = Action(parse.json) { request =>
     val accountJson = request.body
     val account = accountJson.as[Account]
+
+    Account.create(account)
+
     Ok
   }
 

@@ -4,6 +4,7 @@ import play.api._
 import play.api.mvc._
 import play.api.data._
 
+import play.api.libs.json._
 import play.api.libs.json.Json
 
 import java.util.Date
@@ -45,8 +46,9 @@ object Weddings extends AuthController {
 
       Wedding.create(wedding).map(newWedding =>
         Ok(Json.toJson(Map(
-          "status" -> "200",
-          "message" -> "Wedding successfully created"
+          "status" -> Json.toJson("200"),
+          "message" -> Json.toJson("Wedding successfully created"),
+          "wedding" -> Json.toJson(newWedding)
         )))
       ).getOrElse(InternalServerError)
     }.getOrElse(BadRequest)

@@ -28,7 +28,19 @@ object Events extends AuthController {
     }.getOrElse(NotFound)
   }
 
-  def create(weddingId: Long) = TODO
+  def create(weddingId: Long) = IsCoordinatorOf(weddingId) { user => implicit request =>
+    request.body.asJson.map { json =>
+      val event = json.as[Event]
+
+      Event.create(event).map(newEvent =>
+        Ok(Json.toJson(Map(
+          "status" -> Json.toJson("200"),
+          "message" -> Json.toJson("New event created"),
+          "event" -> Json.toJson(newEvent)
+        )))
+      ).getOrElse(InternalServerError)
+    }.getOrElse(BadRequest)
+  }
 
   def updateAll(weddingId: Long) = TODO
 
