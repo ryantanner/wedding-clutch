@@ -8,8 +8,9 @@ import play.api.test.Helpers._
 class WeddingModelSpec extends Specification {
 
   import models._
+  import models.auth._
     
-  // -- User model
+  // -- Account model
 
   "Wedding model" should {
   
@@ -152,14 +153,29 @@ class WeddingModelSpec extends Specification {
     "verify coordinator of wedding" in {  
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
 
-        val testUser = User.findAll.head
+        val testAccount = Account.findAll.head
 
-        val weddings = Wedding.findByCoordinator(testUser)
+        val weddings = Wedding.findByCoordinator(testAccount)
 
-        weddings.map(Wedding.isCoordinator(_, testUser) must beTrue)
+        weddings.map(Wedding.isCoordinator(_, testAccount) must beTrue)
 
       }
     }
+
+    "update a wedding" in {
+      running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
+        
+        val testWedding = Wedding.findById(1, 1).get
+
+        val newWedding = testWedding.copy(name = "Updated Name")
+
+        Wedding.update(newWedding) must equalTo(1) // one row updated in db
+
+        Wedding.findById(1, 1).get.name must equalTo("Updated Name")
+
+      }
+    }
+
 
 
   }

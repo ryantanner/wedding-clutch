@@ -32,9 +32,14 @@ object Wedding {
   }
 
   def findAll: Seq[Wedding] = {
-    DB.withConnection { implicit connection =>
+    Logger.debug("Entering Wedding.findAll")
+
+    val result = DB.withConnection { implicit connection =>
       SQL("select * from wedding").as(Wedding.simple *)
     }
+
+    Logger.debug("Returning from Wedding.findAll")
+    result
   }
 
   def findById(id: Long, coordinatorId: Long): Option[Wedding] = {
@@ -65,10 +70,15 @@ object Wedding {
     }
   }
 
-  def findByCoordinator(coordinator: Account): Seq[Wedding] =
-    coordinator.id.map { id =>
+  def findByCoordinator(coordinator: Account): Seq[Wedding] = {
+    Logger.debug("Entering Wedding.findByCoordinator with parameter coordinator.id = %d".format(coordinator.id.get))
+    val result = coordinator.id.map { id =>
       findByCoordinatorId(id)
     }.getOrElse(Nil)
+
+    Logger.debug("Returning Wedding.findByCoordinator with list length = %d".format(result.length))
+    result
+  }
 
   def findByVenue(venue: String): Seq[Wedding] = {
     DB.withConnection { implicit connection =>
@@ -112,6 +122,30 @@ object Wedding {
 
     }
   }
+
+  def update(wedding: Wedding): Int = {
+    DB.withConnection { implicit connection =>
+      
+      SQL(
+        """
+          update wedding 
+          set name = {name},
+          date = {date},
+          venue = {venue},
+          coordinator_id = {coordinator_id}
+          where id = {id};
+        """
+      ).on(
+        'name -> wedding.name,
+        'date -> wedding.date,
+        'venue -> wedding.venue,
+        'coordinator_id -> wedding.coordinatorId,
+        'id -> wedding.id.get
+      ).executeUpdate()
+
+    }
+  }
+
 
   def isCoordinator(weddingId: Long, coordinator: Account): Boolean = {
     DB.withConnection { implicit connection =>

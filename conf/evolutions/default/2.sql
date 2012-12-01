@@ -2,12 +2,10 @@
 
 # --- !Ups
 
-insert into user (email, name, password) values ('jane.smith@gmail.com', 'Jane Smith', 'password');
-insert into user (email, name, password) values ('mary.kate@gmail.com', 'Mary Kate', 'password');
-insert into user (email, name, password) values ('ellen.joy@gmail.com', 'Ellen Joy', 'password');
-insert into user (email, name, password) values ('cassie.constanzo@gmail.com', 'Cassie Costanzo', 'password');
-
-insert into user_admins (user_id) values (1);
+insert into account (email, password, name, permission) values ('jane.smith@gmail.com', 'password', 'Jane Smith', 'administrator');
+insert into account (email, password, name, permission) values ('mary.kate@gmail.com', 'password', 'Mary Kate', 'normal_user');
+insert into account (email, password, name, permission) values ('ellen.joy@gmail.com', 'password', 'Ellen Joy', 'normal_user');
+insert into account (email, password, name, permission) values ('cassie.constanzo@gmail.com', 'password', 'Cassie Costanzo', 'normal_user');
 
 insert into wedding (name, date, venue, coordinator_id) values ('Test Wedding 1', '2012-04-15', 'Country Club', 1);
 insert into wedding (name, date, venue, coordinator_id) values ('Test Wedding 2', '2012-04-16', 'Country Club', 1);
@@ -73,6 +71,5 @@ delete from events_vendors;
 delete from event;
 delete from vendor;
 delete from wedding;
-delete from user_admins;
-delete from user;
+delete from account;
 

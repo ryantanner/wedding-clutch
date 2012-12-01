@@ -4,11 +4,12 @@
 
 set ignorecase true;
 
-create table user (
+create table account (
   id                bigint identity not null,
   email             varchar(255) not null,
+  password          varchar(255) not null,
   name              varchar(255) not null,
-  password          varchar(255) not null
+  permission        varchar(255) not null
 );
 
 create table wedding (
@@ -17,7 +18,7 @@ create table wedding (
   date              timestamp not null,
   venue             varchar(255) not null,
   coordinator_id    bigint not null,
-  foreign key(coordinator_id) references user(id))
+  foreign key(coordinator_id) references account(id))
 ;
 
 create table event (
@@ -26,7 +27,7 @@ create table event (
   timeline_order    int not null,
   coordinator_id    bigint not null,
   wedding_id        bigint not null,
-  foreign key(coordinator_id) references user(id) on delete cascade,
+  foreign key(coordinator_id) references account(id) on delete cascade,
   foreign key(wedding_id) references wedding(id) on delete cascade)
 ;
 
@@ -36,7 +37,7 @@ create table vendor (
   role              varchar(255) not null,
   phone             varchar(12) not null,
   coordinator_id    bigint not null,
-  foreign key(coordinator_id) references user(id))
+  foreign key(coordinator_id) references account(id))
 ;
 
 create table events_vendors (
@@ -45,13 +46,7 @@ create table events_vendors (
   coordinator_id    bigint not null,
   foreign key(event_id) references event(id) on delete cascade,
   foreign key(vendor_id) references vendor(id) on delete cascade,
-  foreign key(coordinator_id) references user(id) on delete cascade)
-;
-
-
-create table user_admins (
-  user_id           bigint not null,
-  foreign key(user_id) references user(id))
+  foreign key(coordinator_id) references account(id) on delete cascade)
 ;
 
 # --- !Downs
@@ -62,8 +57,7 @@ drop table if exists wedding;
 drop table if exists event;
 drop table if exists vendor;
 drop table if exists events_vendors;
-drop table if exists user_admins;
-drop table if exists user;
+drop table if exists account;
 
 SET REFERENTIAL_INTEGRITY TRUE;
 

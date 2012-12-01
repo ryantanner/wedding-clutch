@@ -54,7 +54,18 @@ object Weddings extends AuthController {
 
   def updateAll = TODO
 
-  def update(id: Long) = TODO
+  def update(id: Long) = IsAuthenticated { user => implicit request =>
+    request.body.asJson.map { weddingJson =>
+      val wedding = weddingJson.as[Wedding]
+
+      Wedding.update(wedding)
+
+      Ok(Json.toJson(Map(
+        "status" -> "200",
+        "message" -> "Wedding successfully updated"
+      )))
+    }.getOrElse(BadRequest)
+  }
 
   def deleteAll = TODO
 

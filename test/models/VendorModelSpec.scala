@@ -8,8 +8,9 @@ import play.api.test.Helpers._
 class VendorModelSpec extends Specification {
 
   import models._
+  import models.auth._
     
-  // -- User model
+  // -- Account model
 
   "Vendor model" should {
 
@@ -40,9 +41,9 @@ class VendorModelSpec extends Specification {
     "be retrieved by role and coordinator" in {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
 
-        val testUser = User.findById(1).get
+        val testAccount = Account.findById(1).get
 
-        Vendor.findByRole("Florist", testUser) must haveLength(2)
+        Vendor.findByRole("Florist", testAccount) must haveLength(2)
 
       }
     }
@@ -50,9 +51,9 @@ class VendorModelSpec extends Specification {
     "not be retrieved by nonexistant role" in {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
 
-        val testUser = User.findById(1).get
+        val testAccount = Account.findById(1).get
 
-        Vendor.findByRole("aslfsd", testUser) must haveLength(0)
+        Vendor.findByRole("aslfsd", testAccount) must haveLength(0)
 
       }
     }

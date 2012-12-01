@@ -5,36 +5,36 @@ import org.specs2.mutable._
 import play.api.test._
 import play.api.test.Helpers._
 
-class UserModelSpec extends Specification {
+class AccountModelSpec extends Specification {
 
-  import models._
+  import models.auth._
     
-  // -- User model
+  // -- Account model
 
-  "User model" should {
+  "Account model" should {
   
     "be retrieved by id" in {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
         
-        val Some(jane) = User.findById(1)
+        val Some(jane) = Account.findById(1)
       
         jane.name must equalTo("Jane Smith")
         jane.email must equalTo("jane.smith@gmail.com")
         jane.password must equalTo("password")
         
-        val Some(mary) = User.findById(2)
+        val Some(mary) = Account.findById(2)
       
         mary.name must equalTo("Mary Kate")
         mary.email must equalTo("mary.kate@gmail.com")
         mary.password must equalTo("password")
         
-        val Some(ellen) = User.findById(3)
+        val Some(ellen) = Account.findById(3)
       
         ellen.name must equalTo("Ellen Joy")
         ellen.email must equalTo("ellen.joy@gmail.com")
         ellen.password must equalTo("password")
         
-        val Some(cassie) = User.findById(4)
+        val Some(cassie) = Account.findById(4)
       
         cassie.name must equalTo("Cassie Costanzo")
         cassie.email must equalTo("cassie.constanzo@gmail.com")
@@ -46,7 +46,7 @@ class UserModelSpec extends Specification {
     "not be retrieved by id if not exist" in {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
 
-        User.findById(-1234) must beNone
+        Account.findById(-1234) must beNone
 
       }
     }
@@ -55,25 +55,25 @@ class UserModelSpec extends Specification {
     "be retrieved by email" in {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
         
-        val Some(jane) = User.findByEmail("jane.smith@gmail.com")
+        val Some(jane) = Account.findByEmail("jane.smith@gmail.com")
       
         jane.name must equalTo("Jane Smith")
         jane.id.get must equalTo(1)
         jane.password must equalTo("password")
         
-        val Some(mary) = User.findByEmail("mary.kate@gmail.com")
+        val Some(mary) = Account.findByEmail("mary.kate@gmail.com")
       
         mary.name must equalTo("Mary Kate")
         mary.id.get must equalTo(2)
         mary.password must equalTo("password")
         
-        val Some(ellen) = User.findByEmail("ellen.joy@gmail.com")
+        val Some(ellen) = Account.findByEmail("ellen.joy@gmail.com")
       
         ellen.name must equalTo("Ellen Joy")
         ellen.id.get must equalTo(3)
         ellen.password must equalTo("password")
         
-        val Some(cassie) = User.findByEmail("cassie.constanzo@gmail.com")
+        val Some(cassie) = Account.findByEmail("cassie.constanzo@gmail.com")
       
         cassie.name must equalTo("Cassie Costanzo")
         cassie.id.get must equalTo(4)
@@ -85,14 +85,14 @@ class UserModelSpec extends Specification {
     "not be retrieved by email if not exist" in {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
 
-        User.findByEmail("NON EXISTANT EMAIL") must beNone
+        Account.findByEmail("NON EXISTANT EMAIL") must beNone
       }
     }
 
     "have 4 sample users" in {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
 
-        User.findAll must haveLength(4)
+        Account.findAll must haveLength(4)
         
       }
     }
@@ -100,25 +100,25 @@ class UserModelSpec extends Specification {
     "authenticate valid users" in {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
 
-        val Some(jane) = User.authenticate("jane.smith@gmail.com", "password")
+        val Some(jane) = Account.authenticate("jane.smith@gmail.com", "password")
       
         jane.name must equalTo("Jane Smith")
         jane.id.get must equalTo(1)
         jane.password must equalTo("password")
         
-        val Some(mary) = User.authenticate("mary.kate@gmail.com", "password")
+        val Some(mary) = Account.authenticate("mary.kate@gmail.com", "password")
       
         mary.name must equalTo("Mary Kate")
         mary.id.get must equalTo(2)
         mary.password must equalTo("password")
         
-        val Some(ellen) = User.authenticate("ellen.joy@gmail.com", "password")
+        val Some(ellen) = Account.authenticate("ellen.joy@gmail.com", "password")
       
         ellen.name must equalTo("Ellen Joy")
         ellen.id.get must equalTo(3)
         ellen.password must equalTo("password")
         
-        val Some(cassie) = User.authenticate("cassie.constanzo@gmail.com", "password")
+        val Some(cassie) = Account.authenticate("cassie.constanzo@gmail.com", "password")
       
         cassie.name must equalTo("Cassie Costanzo")
         cassie.id.get must equalTo(4)
@@ -130,7 +130,7 @@ class UserModelSpec extends Specification {
     "not authenticate invalid users" in {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
 
-        User.authenticate("INVALID EMAIL", "INVALID PASSWORD") must beNone
+        Account.authenticate("INVALID EMAIL", "INVALID PASSWORD") must beNone
 
       }
     }
@@ -138,7 +138,7 @@ class UserModelSpec extends Specification {
     "not authenticate invalid passwords" in {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
 
-        User.authenticate("jane.smith@gmail.com", "INVALID PASSWORD") must beNone
+        Account.authenticate("jane.smith@gmail.com", "INVALID PASSWORD") must beNone
 
       }
     }
@@ -146,9 +146,9 @@ class UserModelSpec extends Specification {
     "create new user" in {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
 
-        val newUser = User(anorm.NotAssigned, "new.email@gmail.com", "New Test User", "password")
+        val newAccount = Account(anorm.NotAssigned, "new.email@gmail.com", "New Test Account", "password", NormalUser)
 
-        User.create(newUser) must beSome
+        Account.create(newAccount) must beSome
 
       }
     }
@@ -157,7 +157,7 @@ class UserModelSpec extends Specification {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
 
         // id = 1 is Jane Smith
-        User.isAdmin(1) must beTrue
+        Account.isAdmin(1) must beTrue
 
       }
     }
@@ -165,10 +165,10 @@ class UserModelSpec extends Specification {
     "have no other user as admin" in {
       running(FakeApplication(additionalConfiguration = inMemoryDatabase())) {
 
-        User.isAdmin(2) must beFalse
-        User.isAdmin(3) must beFalse
-        User.isAdmin(4) must beFalse
-        User.isAdmin(5) must beFalse
+        Account.isAdmin(2) must beFalse
+        Account.isAdmin(3) must beFalse
+        Account.isAdmin(4) must beFalse
+        Account.isAdmin(5) must beFalse
 
       }
     }

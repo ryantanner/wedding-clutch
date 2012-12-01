@@ -34,7 +34,7 @@ object Account {
     }
   }
   
-  implicit def stringToPermission(permission: String): Permission = {
+  implicit def stringToPermission(permission: String) = {
     permission match {
       case "administrator" => Administrator
       case "normal_user" => NormalUser
@@ -46,7 +46,7 @@ object Account {
     get[String]("account.email") ~
     get[String]("account.password") ~
     get[String]("account.name") ~
-    get[Permission]("account.permission") map {
+    get[String]("account.permission") map {
       case id~email~pass~name~perm => Account(id, email, pass, name, perm)
     }
   }
@@ -78,7 +78,20 @@ object Account {
     }
   }
 
-  def create(account: Account) {
+  def isAdmin(accountId: Long): Boolean = {
+    DB.withConnection { implicit connection =>
+      SQL(
+        """
+          select count(account.id) = 1 from account
+          where account.id = {id} and account.permission = 'administrator'
+        """
+      ).on(
+        'id -> accountId
+      ).as(scalar[Boolean].single)
+    }
+  }
+
+  def create(account: Account): Option[Long] = {
     DB.withConnection { implicit connection =>
       SQL("INSERT INTO account VALUES ({id}, {email}, {pass}, {name}, {permission})").on(
         'id -> account.id,
@@ -87,7 +100,7 @@ object Account {
         'pass -> account.password,
         'name -> account.name,
         'permission -> account.permission.toString
-      ).executeUpdate()
+      ).executeInsert()
     }
   }
 
