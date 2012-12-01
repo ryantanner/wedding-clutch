@@ -18,7 +18,8 @@
       <div class="span9">
         @views.html.weddings.wedding(
           selectedWedding.getOrElse(weddings.head),
-          Event.findByWeddingId(selectedWedding.get.id.get, account.id.get))
+          Event.findByWeddingId(selectedWedding.getOrElse(weddings.head).id.get, account.id.get),
+          Vendor.findByWeddingId(selectedWedding.getOrElse(weddings.head).id.get, account.id.get))
       </div>
     </div>
   </div>

@@ -1,4 +1,4 @@
-@(wedding: Wedding, events: Seq[Event])
+@(wedding: Wedding, events: Seq[Event], vendors: Seq[Vendor])
 
 <div class="hero-unit">
   <h1>@wedding.name</h1>
@@ -9,33 +9,30 @@
   <div class="span4">
     <h2>Vendors</h2>
     <ul>
+      @vendors.map{ vendor =>
       <li>
         <div>
-          <h3>Mary's Flowers</h3>
-          <h4>Florist</h4>
-          <h4>Phone: 832-866-7652</h4>
+          <h3>@vendor.name</h3>
+          <h4>@vendor.role</h4>
+          <h4>Phone: @vendor.phone</h4>
         </div>
       </li>
-      <li>
-        <div>
-          <h3>Bob's Catering</h3>
-          <h4>Caterer</h4>
-          <h4>Phone: 832-866-7652</h4>
-        </div>
-      </li>
-      <li>
-        <div>
-          <h3>Jim the DJ</h3>
-          <h4>Music/Entertainment</h4>
-          <h4>Phone: 832-866-7652</h4>
-        </div>
-      </li>
+      }
     </ul>
   </div>
 
   <div class="span5 well">
     <h2>Timeline</h2>
-
+    <ul>
+      @events.sortBy(_.order).map{event =>
+      <li>
+        <div>
+          <h3>@event.name</h3>
+          <h4>@event.vendorIds.length vendors</h4>
+        </div>
+      </li>
+      }
+    </ul>
   </div>
         
 

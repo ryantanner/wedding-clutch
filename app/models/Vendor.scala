@@ -76,6 +76,20 @@ object Vendor   {
     }.getOrElse(Nil)
   }
 
+  def findByWeddingId(weddingId: Long, coordinatorId: Long): Seq[Vendor] = {
+    DB.withConnection { implicit connection =>
+      SQL("""
+        select distinct vendor_id from event 
+        left join events_vendors
+        on event.id = events_vendors.event_id
+        where event.wedding_id = {wedding_id}
+        """
+      ).on(
+        'wedding_id -> weddingId
+      ).as(scalar[Long]*).map(findById(_, coordinatorId)).flatten
+    }
+  }
+
   implicit object VendorFormat extends Format[Vendor] {
 
     def writes(v: Vendor): JsValue = {
