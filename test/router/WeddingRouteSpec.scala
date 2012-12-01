@@ -10,8 +10,9 @@ import play.api.test.Helpers._
 import play.api.mvc.AnyContentAsJson
 import play.api.libs.json.Json.parse
 
-class RouteSpec extends Specification {
+class WeddingRouteSpec extends Specification with SessionHelper {
 
+  /*
   val adminEmail = ("email" -> "jane.smith@gmail.com")
   val adminPass = ("password" -> "password")
 
@@ -97,7 +98,6 @@ class RouteSpec extends Specification {
 
   
 
-    /*
   "REST API as admin" should {
 
     "login as admin" in {
@@ -116,8 +116,8 @@ class RouteSpec extends Specification {
         status(result) must equalTo(OK)
       }
     }
-    */
 
   }
+    */
 
 }
