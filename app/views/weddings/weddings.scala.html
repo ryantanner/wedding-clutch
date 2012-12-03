@@ -1,4 +1,4 @@
-@(account: auth.Account, weddings: Seq[Wedding], selectedWedding: Option[Wedding] = None)
+@(account: auth.Account)
 
 @main("Wedding Clutch")   {
 
@@ -7,19 +7,12 @@
       <div class="span3">
         <div class="well sidebar-nav">
           <!-- List of weddings -->
-          <ul class="nav nav-list">
+          <ul id="weddingList" class="nav nav-list">
             <li class="nav-header">Weddings</li>
-            @weddings.map { wedding =>
-              <li><a href="@routes.Weddings.index(wedding.id.get)">@wedding.name</a></li>
-            }
           </ul>
         </div>
       </div>
       <div class="span9">
-        @views.html.weddings.wedding(
-          selectedWedding.getOrElse(weddings.head),
-          Event.findByWeddingId(selectedWedding.getOrElse(weddings.head).id.get, account.id.get),
-          Vendor.findByWeddingId(selectedWedding.getOrElse(weddings.head).id.get, account.id.get))
       </div>
     </div>
   </div>

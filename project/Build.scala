@@ -9,6 +9,7 @@ object ApplicationBuild extends Build {
 
     val appDependencies = Seq(
       "org.webjars" % "bootstrap" % "2.1.1",
+      "org.webjars" % "underscorejs" % "1.4.2",      
       "org.mindrot" % "jbcrypt" % "0.3m",
       "jp.t2v" % "play20.auth_2.9.1" % "0.4"
     )

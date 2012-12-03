@@ -18,10 +18,7 @@ object Weddings extends AuthController {
 
   def index(id: Long) = IsAuthenticated { user => _ =>
     val weddings = Wedding.findByCoordinator(user)
-    Ok(html.weddings.weddings(
-      user,
-      weddings,
-      Wedding.findById(id,user)))
+    Ok(html.weddings.weddings(user))
   }
 
   def main = index(0)
