@@ -1,1 +1,4 @@
-body { }
+.span3 .item-list-container  {
+  max-width: 300px;
+  padding: 15px 0;
+}
