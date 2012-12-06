@@ -34,6 +34,26 @@ var WeddingList = Backbone.Collection.extend({
 
 });
 
+var WeddingView = Backbone.View.extend({
+
+  template: _.template($('#tmpl-wedding').html()),
+
+  initialize: function() {
+    this.model.bind('change', this.render, this);
+  },
+
+  render: function(eventName) {
+    this.$el.html(this.template(this.model.toJSON()));
+    return this;
+  },
+
+  close: function () {
+    this.$el.unbind();
+    this.$el.remove();
+  }
+
+});
+
 var WeddingListView = Backbone.View.extend({
 
   id: 'wedding-list',
@@ -41,6 +61,10 @@ var WeddingListView = Backbone.View.extend({
   tagName: 'ul',
 
   className: 'nav nav-list item-nav-list',
+
+  events: {
+    "selection":"reset"
+  },
 
   initialize: function() {
     this.model.bind("reset", this.render, this);
@@ -51,6 +75,10 @@ var WeddingListView = Backbone.View.extend({
       $(this.el).append(new WeddingListItemView({model:wedding}).render().el)
     }, this);
     return this;
+  },
+
+  reset: function(eventName) {
+    this.$('li').removeClass('active');
   }
 
 });
@@ -61,6 +89,10 @@ var WeddingListItemView = Backbone.View.extend({
 
   template: _.template($('#tmpl-wedding-list-item').html()),
 
+  events: {
+    "click a":"navigate"
+  },
+
   initialize: function() {
     this.model.bind("change", this.render, this);
     this.model.bind("destroy", this.close, this);
@@ -69,6 +101,14 @@ var WeddingListItemView = Backbone.View.extend({
   render: function(eventName) {
     this.$el.html(this.template(this.model.toJSON()));
     return this;
+  },
+
+  navigate: function() {
+    console.log("navigating to " + this.model.get('id'));
+
+    app.navigate("" + this.model.get('id'), { trigger: true });
+
+    this.$el.addClass('active');
   },
 
   close: function() {
@@ -81,14 +121,32 @@ var WeddingListItemView = Backbone.View.extend({
 var AppRouter = Backbone.Router.extend({
 
   routes: {
-    "":"list"
+    "":"list",
+    ":id":"single"
   },
 
-  list: function() {
+  initialize: function() {
     this.weddingList = new WeddingList();
     this.weddingListView = new WeddingListView({model: this.weddingList});
     this.weddingList.fetch();
     $("#wedding-list").html(this.weddingListView.render().el);
+  },
+
+  list: function() {
+  },
+
+  single: function(id) {
+    this.wedding = this.weddingList.get(id);
+
+    if(this.weddingView) this.weddingView.close();
+
+    this.weddingView = new WeddingView({ model: this.wedding });
+
+    $('#wedding').html(this.weddingView.render().el);
+
+    this.weddingListView.trigger('selection');
+
+    console.log("selected wedding with id = " + id);
   }
 
 });
